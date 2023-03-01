@@ -3,6 +3,20 @@
   let email = document.getElementById("email")
   let telephone = document.getElementById("phone")
   let message = document.getElementById("message")
+  document.querySelector('form[name="contact"]').addEventListener('submit', function (e) {
+    e.preventDefault();
+  
+    const formData = new FormData(e.target);
+    fetch('/', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+      },
+      body: new URLSearchParams(formData).toString(),
+    })
+      .then(() => alert('Thank you for your message!'))
+      .catch((error) => alert(error));
+  });
 document.getElementById("contactForm").addEventListener("submit", (e)=> {
   e.preventDefault()
   let formData = {
