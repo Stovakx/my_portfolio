@@ -1,12 +1,10 @@
-
 const nodemailer = require('nodemailer');
 const express = require('express');
 const bodyParser = require('body-parser');
 
 const app = express();
-app.use(express.static('public'));
+app.use(express.json());
 app.use(bodyParser.urlencoded({ extended: true }));
-const app = express();
 const PORT = 5500;
 
 app.use(express.static('my_portfolio'));
@@ -19,7 +17,9 @@ app.get('/', (req, res) => {
 });
 
 app.post('/', (req, res) => {
+  const formData = req.body;
   console.log(req.body);
+  res.send('success');
 
   const transporter = nodemailer.createTransport({
     service: 'smtp.ethereal.email',
@@ -37,7 +37,7 @@ app.post('/', (req, res) => {
     text: `
     Name: ${req.body.fullName}\n
     Email: ${req.body.email}\n
-    Telephone: ${req.bodytelephone}\n
+    Telephone: ${req.body.telephone}\n
     Message: ${req.body.message}`
   };
 
