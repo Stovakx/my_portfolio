@@ -1,45 +1,55 @@
-import express from '../node_modules/express/lib/express.js';
-import { urlencoded, json } from 'body-parser';
-import nodemailer from '../node_modules/nodemailer/lib/nodemailer.js';
+
+const nodemailer = require('nodemailer');
+const express = require('express');
+const bodyParser = require('body-parser');
 
 const app = express();
+app.use(express.static('public'));
+app.use(bodyParser.urlencoded({ extended: true }));
+const app = express();
+const PORT = 5500;
 
-app.use(urlencoded({ extended: true }));
-app.use(json());
+app.use(express.static('my_portfolio'));
+//parse incoming data
+app.use(express.urlencoded({ extended: true }));
+app.use(express.json());
 
-app.post('/submit-form', (req, res) => {
-  const { fullName, email, telephone, message } = req.body;
-    //ethreal mail?
+app.get('/', (req, res) => {
+  res.sendFile(__dirname + '/my_portfolio/index.html');
+});
+
+app.post('/', (req, res) => {
+  console.log(req.body);
+
   const transporter = nodemailer.createTransport({
-    service: 'smtp.ethereal.email', // email service
+    service: 'smtp.ethereal.email',
     port: 587,
     auth: {
-      user: 'orion.oconnell45@ethereal.email', // Ethreal SMTP? 
-      pass: 'ycCnUrC4yTWqD4p3Ng' //Do i need some pw?
+      user: 'orion.oconnell45@ethereal.email',
+      pass: 'ycCnUrC4yTWqD4p3Ng'
     }
   });
 
   const mailOptions = {
-    from: email,
-    to: 'Robin.Palatas@gmail.com', // replace with Tom's email
-    subject: 'Objednání fotografování',
+    from: req.body.email,
+    to: 'Robin.Palatas@gmail.com',
+    subject: 'from personal website',
     text: `
-      Name: ${fullName}\n
-      Email: ${email}\n
-      Telephone: ${telephone}\n
-      Message: ${message}
-    `
+    Name: ${req.body.fullName}\n
+    Email: ${req.body.email}\n
+    Telephone: ${req.bodytelephone}\n
+    Message: ${req.body.message}`
   };
 
   transporter.sendMail(mailOptions, (error, info) => {
     if (error) {
       console.log(error);
-      res.status(500).send('Email se nepodařilo odeslat, zkuste to prosím znova.');
     } else {
       console.log('Email sent: ' + info.response);
-      res.status(200).send('Email byl odeslán.');
     }
   });
 });
 
-app.listen(3000, () => console.log('Server started on port 3000'));
+app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
+});
